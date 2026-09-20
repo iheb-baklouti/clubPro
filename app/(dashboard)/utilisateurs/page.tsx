@@ -23,10 +23,20 @@ export default async function UtilisateursPage() {
   const isManager = currentProfile?.role === "direction" || currentProfile?.role === "admin";
   if (!isManager) redirect("/");
 
-  const { data: members } = await supabase
-    .from("profiles")
-    .select("id, full_name, email, role, created_at")
-    .order("created_at", { ascending: true });
+  const [{ data: members }, { data: allPlayers }, { data: linkedProfiles }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id, full_name, email, role, created_at")
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("players")
+      .select("id, full_name, jersey_number, teams(name)")
+      .order("full_name"),
+    supabase.from("profiles").select("player_id").not("player_id", "is", null),
+  ]);
+
+  const linkedPlayerIds = new Set(linkedProfiles?.map((p) => p.player_id));
+  const availablePlayers = (allPlayers ?? []).filter((p) => !linkedPlayerIds.has(p.id));
 
   return (
     <div className="space-y-6">
@@ -35,7 +45,7 @@ export default async function UtilisateursPage() {
           <h1 className="text-2xl font-bold tracking-tight">Utilisateurs &amp; rôles</h1>
           <p className="text-muted-foreground">Membres du staff ayant accès au club.</p>
         </div>
-        <InviteMemberDialog />
+        <InviteMemberDialog availablePlayers={availablePlayers} />
       </div>
 
       <Card>

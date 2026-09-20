@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { Users, UsersRound, CalendarDays, Wallet, ClipboardList } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/server";
 import { formatMatchDate } from "@/lib/format";
+import { StatCard } from "@/components/features/dashboard/stat-card";
 import {
   LeagueStandingsCard,
   LeagueStandingsCardSkeleton,
@@ -40,55 +42,23 @@ export default async function DirectionDashboardPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Link href="/equipes">
-          <Card className="transition-colors hover:bg-accent/50">
-            <CardHeader>
-              <CardTitle>Équipes</CardTitle>
-              <CardDescription>Catégories actives dans le club</CardDescription>
-            </CardHeader>
-            <CardContent className="text-3xl font-bold">{teamsCount ?? 0}</CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/equipes">
-          <Card className="transition-colors hover:bg-accent/50">
-            <CardHeader>
-              <CardTitle>Joueurs</CardTitle>
-              <CardDescription>Effectif total du club</CardDescription>
-            </CardHeader>
-            <CardContent className="text-3xl font-bold">{playersCount ?? 0}</CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/calendrier">
-          <Card className="transition-colors hover:bg-accent/50">
-            <CardHeader>
-              <CardTitle>Prochains matchs</CardTitle>
-              <CardDescription>Matchs à venir, toutes équipes</CardDescription>
-            </CardHeader>
-            <CardContent className="text-3xl font-bold">{upcomingMatches ?? 0}</CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/cotisations">
-          <Card className="transition-colors hover:bg-accent/50">
-            <CardHeader>
-              <CardTitle>Cotisations en attente</CardTitle>
-              <CardDescription>Paiements non réglés</CardDescription>
-            </CardHeader>
-            <CardContent className="text-3xl font-bold">{pendingPayments ?? 0}</CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/taches">
-          <Card className="transition-colors hover:bg-accent/50">
-            <CardHeader>
-              <CardTitle>Tâches à faire</CardTitle>
-              <CardDescription>Assignations bénévoles en cours</CardDescription>
-            </CardHeader>
-            <CardContent className="text-3xl font-bold">{openTasks ?? 0}</CardContent>
-          </Card>
-        </Link>
+        <StatCard href="/equipes" icon={Users} label="Équipes actives" value={teamsCount ?? 0} />
+        <StatCard href="/equipes" icon={UsersRound} label="Joueurs au total" value={playersCount ?? 0} />
+        <StatCard
+          href="/calendrier"
+          icon={CalendarDays}
+          label="Matchs à venir"
+          value={upcomingMatches ?? 0}
+          accent="live"
+        />
+        <StatCard
+          href="/cotisations"
+          icon={Wallet}
+          label="Cotisations en attente"
+          value={pendingPayments ?? 0}
+          accent="gold"
+        />
+        <StatCard href="/taches" icon={ClipboardList} label="Tâches à faire" value={openTasks ?? 0} />
       </div>
 
       <Suspense fallback={<LeagueStandingsCardSkeleton />}>

@@ -44,6 +44,18 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        "accent-live": {
+          DEFAULT: "hsl(var(--accent-live))",
+          foreground: "hsl(var(--accent-live-foreground))",
+        },
+        "accent-gold": {
+          DEFAULT: "hsl(var(--accent-gold))",
+          foreground: "hsl(var(--accent-gold-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

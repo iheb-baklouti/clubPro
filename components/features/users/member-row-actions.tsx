@@ -13,11 +13,11 @@ import {
 import { ConfirmDeleteButton } from "@/components/features/confirm-delete-button";
 import { updateMemberRole, revokeMemberAccess } from "@/app/(dashboard)/utilisateurs/actions";
 import { ROLE_LABELS } from "@/lib/nav-items";
-import { assignableRoleValues, type AssignableRole } from "@/lib/validations/users";
+import { staffRoleValues, type StaffRole } from "@/lib/validations/users";
 import type { UserRole } from "@/lib/types";
 
-function isAssignableRole(role: UserRole): role is AssignableRole {
-  return (assignableRoleValues as readonly string[]).includes(role);
+function isStaffRole(role: UserRole): role is StaffRole {
+  return (staffRoleValues as readonly string[]).includes(role);
 }
 
 export function MemberRoleSelect({
@@ -32,7 +32,7 @@ export function MemberRoleSelect({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  if (isSelf || !isAssignableRole(role)) {
+  if (isSelf || !isStaffRole(role)) {
     return (
       <span className="text-sm text-muted-foreground">
         {ROLE_LABELS[role]}
@@ -47,7 +47,7 @@ export function MemberRoleSelect({
         value={role}
         onValueChange={(v) =>
           startTransition(async () => {
-            const result = await updateMemberRole(profileId, v as AssignableRole);
+            const result = await updateMemberRole(profileId, v as StaffRole);
             if (result?.error) setError(result.error);
             else setError(null);
           })
@@ -57,7 +57,7 @@ export function MemberRoleSelect({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {assignableRoleValues.map((value) => (
+          {staffRoleValues.map((value) => (
             <SelectItem key={value} value={value}>
               {ROLE_LABELS[value]}
             </SelectItem>

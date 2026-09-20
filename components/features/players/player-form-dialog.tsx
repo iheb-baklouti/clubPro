@@ -8,6 +8,7 @@ import { Loader2, Pencil, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -61,6 +62,9 @@ export function PlayerFormDialog({ mode, teamId, player }: PlayerFormDialogProps
       position: player?.position ?? "",
       jerseyNumber: player?.jersey_number ? String(player.jersey_number) : "",
       status: player?.status ?? "actif",
+      emergencyContactName: player?.emergency_contact_name ?? "",
+      emergencyContactPhone: player?.emergency_contact_phone ?? "",
+      medicalNotes: player?.medical_notes ?? "",
     },
   });
 
@@ -74,6 +78,9 @@ export function PlayerFormDialog({ mode, teamId, player }: PlayerFormDialogProps
     formData.set("position", values.position ?? "");
     formData.set("jerseyNumber", values.jerseyNumber ?? "");
     formData.set("status", values.status);
+    formData.set("emergencyContactName", values.emergencyContactName ?? "");
+    formData.set("emergencyContactPhone", values.emergencyContactPhone ?? "");
+    formData.set("medicalNotes", values.medicalNotes ?? "");
 
     startTransition(async () => {
       const result =
@@ -154,6 +161,22 @@ export function PlayerFormDialog({ mode, teamId, player }: PlayerFormDialogProps
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="emergencyContactName">Contact d&apos;urgence</Label>
+              <Input id="emergencyContactName" placeholder="Nom" {...register("emergencyContactName")} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="emergencyContactPhone">Téléphone d&apos;urgence</Label>
+              <Input id="emergencyContactPhone" {...register("emergencyContactPhone")} />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="medicalNotes">Notes médicales (allergies, traitements...)</Label>
+            <Textarea id="medicalNotes" rows={2} {...register("medicalNotes")} />
           </div>
 
           {serverError && <p className="text-sm text-destructive">{serverError}</p>}

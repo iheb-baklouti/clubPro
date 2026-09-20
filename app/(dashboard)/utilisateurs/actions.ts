@@ -7,7 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import {
   inviteMemberSchema,
   roleUpdateSchema,
-  type AssignableRole,
+  type StaffRole,
 } from "@/lib/validations/users";
 
 export interface ActionState {
@@ -43,6 +43,7 @@ export async function inviteMember(
     email: formData.get("email"),
     fullName: formData.get("fullName"),
     role: formData.get("role") || "coach",
+    playerId: formData.get("playerId") || "",
   });
 
   if (!parsed.success) {
@@ -74,7 +75,11 @@ export async function inviteMember(
 
   const { error: profileError } = await admin
     .from("profiles")
-    .update({ club_id: clubId, role: parsed.data.role })
+    .update({
+      club_id: clubId,
+      role: parsed.data.role,
+      player_id: parsed.data.role === "joueur" ? parsed.data.playerId : null,
+    })
     .eq("id", data.user.id);
 
   if (profileError) {
@@ -87,7 +92,7 @@ export async function inviteMember(
 
 export async function updateMemberRole(
   profileId: string,
-  role: AssignableRole,
+  role: StaffRole,
 ): Promise<ActionState> {
   const parsed = roleUpdateSchema.safeParse({ role });
   if (!parsed.success) {
@@ -127,7 +132,7 @@ export async function revokeMemberAccess(profileId: string): Promise<ActionState
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("profiles")
-    .update({ club_id: null, role: "coach" })
+    .update({ club_id: null, role: "coach", player_id: null })
     .eq("id", profileId)
     .eq("club_id", manager.clubId)
     .select("id");

@@ -1,7 +1,7 @@
-import Link from "next/link";
+import { CalendarDays, Users } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
+import { StatCard } from "@/components/features/dashboard/stat-card";
 
 export default async function CoachDashboardPage() {
   const supabase = await createClient();
@@ -18,25 +18,14 @@ export default async function CoachDashboardPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Link href="/calendrier">
-          <Card className="transition-colors hover:bg-accent/50">
-            <CardHeader>
-              <CardTitle>Prochains matchs</CardTitle>
-              <CardDescription>À venir pour le club</CardDescription>
-            </CardHeader>
-            <CardContent className="text-3xl font-bold">{upcomingMatches ?? 0}</CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/equipes">
-          <Card className="transition-colors hover:bg-accent/50">
-            <CardHeader>
-              <CardTitle>Équipes</CardTitle>
-              <CardDescription>Catégories que vous encadrez</CardDescription>
-            </CardHeader>
-            <CardContent className="text-3xl font-bold">{teamsCount ?? 0}</CardContent>
-          </Card>
-        </Link>
+        <StatCard
+          href="/calendrier"
+          icon={CalendarDays}
+          label="Prochains matchs à venir"
+          value={upcomingMatches ?? 0}
+          accent="live"
+        />
+        <StatCard href="/equipes" icon={Users} label="Équipes encadrées" value={teamsCount ?? 0} />
       </div>
     </div>
   );

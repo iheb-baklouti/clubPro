@@ -32,5 +32,6 @@ export async function sendMessage(
   if (error) return { error: "Impossible d'envoyer le message : " + error.message };
 
   revalidatePath("/messagerie");
+  revalidatePath("/joueur/messagerie");
   return {};
 }

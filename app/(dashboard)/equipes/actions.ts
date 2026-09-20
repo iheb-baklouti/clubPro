@@ -87,6 +87,9 @@ function parsePlayerFormData(formData: FormData) {
     position: formData.get("position"),
     jerseyNumber: formData.get("jerseyNumber"),
     status: formData.get("status") || "actif",
+    emergencyContactName: formData.get("emergencyContactName"),
+    emergencyContactPhone: formData.get("emergencyContactPhone"),
+    medicalNotes: formData.get("medicalNotes"),
   });
 }
 
@@ -108,6 +111,9 @@ export async function createPlayer(
     position: parsed.data.position || null,
     jersey_number: parsed.data.jerseyNumber ? Number(parsed.data.jerseyNumber) : null,
     status: parsed.data.status,
+    emergency_contact_name: parsed.data.emergencyContactName || null,
+    emergency_contact_phone: parsed.data.emergencyContactPhone || null,
+    medical_notes: parsed.data.medicalNotes || null,
   });
 
   if (error) return { error: "Impossible d'ajouter le joueur : " + error.message };
@@ -136,6 +142,9 @@ export async function updatePlayer(
       position: parsed.data.position || null,
       jersey_number: parsed.data.jerseyNumber ? Number(parsed.data.jerseyNumber) : null,
       status: parsed.data.status,
+      emergency_contact_name: parsed.data.emergencyContactName || null,
+      emergency_contact_phone: parsed.data.emergencyContactPhone || null,
+      medical_notes: parsed.data.medicalNotes || null,
     })
     .eq("id", playerId)
     .select("id");
@@ -146,6 +155,37 @@ export async function updatePlayer(
   revalidatePath(`/equipes/${teamId}`);
   revalidatePath(`/equipes/${teamId}/joueurs/${playerId}`);
   return {};
+}
+
+export interface ImportPlayerRow {
+  fullName: string;
+  jerseyNumber: number | null;
+  position: string | null;
+  birthDate: string | null;
+}
+
+export async function importPlayers(
+  teamId: string,
+  rows: ImportPlayerRow[],
+): Promise<ActionState & { imported?: number }> {
+  const valid = rows.filter((r) => r.fullName.trim().length >= 2);
+  if (valid.length === 0) return { error: "Aucune ligne valide à importer." };
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("players").insert(
+    valid.map((r) => ({
+      team_id: teamId,
+      full_name: r.fullName.trim(),
+      jersey_number: r.jerseyNumber,
+      position: r.position || null,
+      birth_date: r.birthDate || null,
+    })),
+  );
+
+  if (error) return { error: "Impossible d'importer les joueurs : " + error.message };
+
+  revalidatePath(`/equipes/${teamId}`);
+  return { imported: valid.length };
 }
 
 export async function deletePlayer(playerId: string, teamId: string): Promise<ActionState> {

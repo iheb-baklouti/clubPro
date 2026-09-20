@@ -23,5 +23,9 @@ export default async function HomePage() {
     redirect("/direction");
   }
 
+  if (profile?.role === "joueur") {
+    redirect("/joueur");
+  }
+
   redirect("/coach");
 }

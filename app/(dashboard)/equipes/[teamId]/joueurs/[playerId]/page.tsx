@@ -119,6 +119,28 @@ export default async function PlayerDetailPage({
         </div>
       </div>
 
+      {(player.emergency_contact_name || player.emergency_contact_phone || player.medical_notes) && (
+        <Card>
+          <CardContent className="grid gap-3 p-4 sm:grid-cols-3">
+            {(player.emergency_contact_name || player.emergency_contact_phone) && (
+              <div>
+                <p className="text-xs text-muted-foreground">Contact d&apos;urgence</p>
+                <p className="text-sm font-medium">
+                  {player.emergency_contact_name}
+                  {player.emergency_contact_phone ? ` · ${player.emergency_contact_phone}` : ""}
+                </p>
+              </div>
+            )}
+            {player.medical_notes && (
+              <div className="sm:col-span-2">
+                <p className="text-xs text-muted-foreground">Notes médicales</p>
+                <p className="text-sm font-medium">{player.medical_notes}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {[
           { label: "Matchs", value: totals.matches },

@@ -74,6 +74,87 @@ export type Database = {
           },
         ]
       }
+      carpool_offers: {
+        Row: {
+          created_at: string
+          departure_location: string | null
+          driver_player_id: string
+          id: string
+          match_id: string
+          notes: string | null
+          seats_total: number
+        }
+        Insert: {
+          created_at?: string
+          departure_location?: string | null
+          driver_player_id: string
+          id?: string
+          match_id: string
+          notes?: string | null
+          seats_total?: number
+        }
+        Update: {
+          created_at?: string
+          departure_location?: string | null
+          driver_player_id?: string
+          id?: string
+          match_id?: string
+          notes?: string | null
+          seats_total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carpool_offers_driver_player_id_fkey"
+            columns: ["driver_player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carpool_offers_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      carpool_passengers: {
+        Row: {
+          created_at: string
+          id: string
+          offer_id: string
+          player_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          offer_id: string
+          player_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          offer_id?: string
+          player_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carpool_passengers_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "carpool_offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carpool_passengers_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clubs: {
         Row: {
           created_at: string
@@ -277,6 +358,94 @@ export type Database = {
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      match_mvp_votes: {
+        Row: {
+          created_at: string
+          id: string
+          match_id: string
+          voted_player_id: string
+          voter_profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          match_id: string
+          voted_player_id: string
+          voter_profile_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          match_id?: string
+          voted_player_id?: string
+          voter_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_mvp_votes_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_mvp_votes_voted_player_id_fkey"
+            columns: ["voted_player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_mvp_votes_voter_profile_id_fkey"
+            columns: ["voter_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      match_photos: {
+        Row: {
+          caption: string | null
+          created_at: string
+          id: string
+          match_id: string
+          storage_path: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          match_id: string
+          storage_path: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          match_id?: string
+          storage_path?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_photos_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_photos_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -585,9 +754,12 @@ export type Database = {
         Row: {
           birth_date: string | null
           created_at: string
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
           full_name: string
           id: string
           jersey_number: number | null
+          medical_notes: string | null
           photo_url: string | null
           position: string | null
           status: Database["public"]["Enums"]["player_status"]
@@ -596,9 +768,12 @@ export type Database = {
         Insert: {
           birth_date?: string | null
           created_at?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
           full_name: string
           id?: string
           jersey_number?: number | null
+          medical_notes?: string | null
           photo_url?: string | null
           position?: string | null
           status?: Database["public"]["Enums"]["player_status"]
@@ -607,9 +782,12 @@ export type Database = {
         Update: {
           birth_date?: string | null
           created_at?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
           full_name?: string
           id?: string
           jersey_number?: number | null
+          medical_notes?: string | null
           photo_url?: string | null
           position?: string | null
           status?: Database["public"]["Enums"]["player_status"]
@@ -633,6 +811,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          player_id: string | null
           role: Database["public"]["Enums"]["user_role"]
         }
         Insert: {
@@ -642,6 +821,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          player_id?: string | null
           role?: Database["public"]["Enums"]["user_role"]
         }
         Update: {
@@ -651,11 +831,57 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          player_id?: string | null
           role?: Database["public"]["Enums"]["user_role"]
         }
         Relationships: [
           {
             foreignKeyName: "profiles_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sponsors: {
+        Row: {
+          club_id: string
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          order_index: number
+          website_url: string | null
+        }
+        Insert: {
+          club_id: string
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          order_index?: number
+          website_url?: string | null
+        }
+        Update: {
+          club_id?: string
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          order_index?: number
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsors_club_id_fkey"
             columns: ["club_id"]
             isOneToOne: false
             referencedRelation: "clubs"
@@ -991,6 +1217,7 @@ export type Database = {
     }
     Functions: {
       current_club_id: { Args: never; Returns: string }
+      current_player_id: { Args: never; Returns: string }
       current_role: {
         Args: never
         Returns: Database["public"]["Enums"]["user_role"]
@@ -1010,7 +1237,7 @@ export type Database = {
       player_status: "actif" | "blesse" | "suspendu"
       task_status: "a_faire" | "fait"
       training_type: "physique" | "technique" | "tactique" | "recuperation"
-      user_role: "direction" | "coach" | "staff_medical" | "admin"
+      user_role: "direction" | "coach" | "staff_medical" | "admin" | "joueur"
       video_tag_type: "but" | "occasion" | "faute" | "carton"
     }
     CompositeTypes: {
@@ -1152,7 +1379,7 @@ export const Constants = {
       player_status: ["actif", "blesse", "suspendu"],
       task_status: ["a_faire", "fait"],
       training_type: ["physique", "technique", "tactique", "recuperation"],
-      user_role: ["direction", "coach", "staff_medical", "admin"],
+      user_role: ["direction", "coach", "staff_medical", "admin", "joueur"],
       video_tag_type: ["but", "occasion", "faute", "carton"],
     },
   },

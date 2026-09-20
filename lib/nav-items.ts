@@ -11,6 +11,8 @@ import {
   LayoutTemplate,
   HeartPulse,
   Repeat,
+  User,
+  Settings,
 } from "lucide-react";
 
 import type { UserRole } from "@/lib/types";
@@ -34,11 +36,21 @@ export function getNavItems(role: UserRole): NavItem[] {
         { label: "Tâches", href: "/taches", icon: ClipboardList },
         { label: "Messagerie", href: "/messagerie", icon: MessageSquare },
         { label: "Cotisations", href: "/cotisations", icon: Wallet },
+        { label: "Paramètres du club", href: "/club", icon: Settings },
       ];
     case "staff_medical":
       return [
         { label: "Tableau de bord", href: "/coach", icon: LayoutDashboard },
         { label: "Suivi des blessures", icon: HeartPulse },
+      ];
+    case "joueur":
+      return [
+        { label: "Tableau de bord", href: "/joueur", icon: LayoutDashboard },
+        { label: "Calendrier", href: "/joueur/calendrier", icon: CalendarDays },
+        { label: "Mon profil", href: "/joueur/profil", icon: User },
+        { label: "Tâches", href: "/joueur/taches", icon: ClipboardList },
+        { label: "Cotisations", href: "/joueur/cotisations", icon: Wallet },
+        { label: "Messagerie", href: "/joueur/messagerie", icon: MessageSquare },
       ];
     case "coach":
     default:
@@ -60,4 +72,5 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   coach: "Coach",
   staff_medical: "Staff médical",
   admin: "Administrateur",
+  joueur: "Joueur",
 };

@@ -4,24 +4,35 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --primary: 142.1 76.2% 36.3%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 142.1 76.2% 36.3%;
-    --radius: 0.5rem;
+    /* Thème sombre "app sportive" — seul thème de l'application (pas de
+       bascule clair/sombre demandée) : fond quasi noir à dominante bleu nuit,
+       vert néon comme accent principal du club. */
+    --background: 222 25% 6%;
+    --foreground: 210 20% 96%;
+    --card: 222 22% 10%;
+    --card-foreground: 210 20% 96%;
+    --popover: 222 22% 11%;
+    --popover-foreground: 210 20% 96%;
+    --primary: 142 84% 47%;
+    --primary-foreground: 222 25% 6%;
+    --secondary: 222 18% 16%;
+    --secondary-foreground: 210 20% 92%;
+    --muted: 222 18% 14%;
+    --muted-foreground: 217 12% 65%;
+    --accent: 222 18% 18%;
+    --accent-foreground: 210 20% 96%;
+    --destructive: 0 78% 58%;
+    --destructive-foreground: 210 20% 96%;
+    --border: 222 16% 20%;
+    --input: 222 16% 20%;
+    --ring: 142 84% 47%;
+    --radius: 0.75rem;
+
+    /* Accents "sportifs" additionnels — statuts live/à venir, mise en avant. */
+    --accent-live: 4 90% 58%;
+    --accent-live-foreground: 0 0% 100%;
+    --accent-gold: 43 96% 56%;
+    --accent-gold-foreground: 222 25% 6%;
   }
 }
 
@@ -29,8 +40,17 @@
   * {
     @apply border-border;
   }
+  html {
+    color-scheme: dark;
+  }
   body {
     @apply bg-background text-foreground;
+    background-image: radial-gradient(
+      circle at top,
+      hsl(222 30% 10%) 0%,
+      hsl(222 25% 6%) 55%
+    );
+    background-attachment: fixed;
   }
 }
 

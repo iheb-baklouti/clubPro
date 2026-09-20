@@ -11,6 +11,9 @@ import { PlayerRowActions } from "@/components/features/players/player-row-actio
 import { PlayerAvatar } from "@/components/features/players/player-avatar";
 import { TeamRowActions } from "@/components/features/teams/team-row-actions";
 import { ExportCsvButton } from "@/components/features/shared/export-csv-button";
+import { PlayerCsvImportDialog } from "@/components/features/players/player-csv-import-dialog";
+import { SeasonRecordStrip } from "@/components/features/teams/season-record-strip";
+import { computeSeasonRecord } from "@/lib/season-record";
 
 const STATUS_VARIANT = {
   actif: "default",
@@ -40,11 +43,20 @@ export default async function TeamRosterPage({
 
   if (!team) notFound();
 
-  const { data: players } = await supabase
-    .from("players")
-    .select("*")
-    .eq("team_id", teamId)
-    .order("jersey_number", { ascending: true, nullsFirst: false });
+  const [{ data: players }, { data: seasonMatches }] = await Promise.all([
+    supabase
+      .from("players")
+      .select("*")
+      .eq("team_id", teamId)
+      .order("jersey_number", { ascending: true, nullsFirst: false }),
+    supabase
+      .from("matches")
+      .select("home_or_away, score_home, score_away")
+      .eq("team_id", teamId)
+      .eq("status", "joue"),
+  ]);
+
+  const seasonRecord = computeSeasonRecord(seasonMatches ?? []);
 
   return (
     <div className="space-y-6">
@@ -71,9 +83,12 @@ export default async function TeamRosterPage({
               { key: "birth_date", label: "Date de naissance" },
             ]}
           />
+          <PlayerCsvImportDialog teamId={team.id} />
           <PlayerFormDialog mode="create" teamId={team.id} />
         </div>
       </div>
+
+      <SeasonRecordStrip record={seasonRecord} />
 
       {!players || players.length === 0 ? (
         <Card>

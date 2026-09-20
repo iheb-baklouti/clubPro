@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { LayoutTemplate } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentSession } from "@/lib/supabase/session";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,9 @@ import { MatchVideoSection } from "@/components/features/matches/match-video-sec
 import { MatchWeatherCard } from "@/components/features/matches/match-weather-card";
 import { ScoutingNotesForm } from "@/components/features/matches/scouting-notes-form";
 import { ExportMatchPdfButton } from "@/components/features/matches/export-match-pdf-button";
+import { MvpVoting } from "@/components/features/matches/mvp-voting";
+import { MatchPhotoGallery } from "@/components/features/matches/match-photo-gallery";
+import { CarpoolBoard } from "@/components/features/matches/carpool-board";
 import { formatMatchDate } from "@/lib/format";
 
 export default async function MatchDetailPage({
@@ -41,6 +45,10 @@ export default async function MatchDetailPage({
     { data: stats },
     { data: videoClips },
     { data: scoutingNote },
+    { data: mvpVotes },
+    { data: photos },
+    { data: carpoolOffers },
+    session,
   ] = await Promise.all([
     supabase.from("teams").select("id, name").order("name"),
     supabase
@@ -65,11 +73,33 @@ export default async function MatchDetailPage({
       .select("strengths, weaknesses, key_players, notes")
       .eq("match_id", matchId)
       .maybeSingle(),
+    supabase.from("match_mvp_votes").select("voter_profile_id, voted_player_id").eq("match_id", matchId),
+    supabase
+      .from("match_photos")
+      .select("id, storage_path, caption, created_at")
+      .eq("match_id", matchId)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("carpool_offers")
+      .select("id, driver_player_id, seats_total, departure_location, notes, players(full_name)")
+      .eq("match_id", matchId),
+    getCurrentSession(),
   ]);
 
   const callUpByPlayer = new Map(callUps?.map((c) => [c.player_id, c.status]));
   const availabilityByPlayer = new Map(availability?.map((a) => [a.player_id, a.status]));
   const statByPlayer = new Map(stats?.map((s) => [s.player_id, s]));
+  const mvpTally = new Map<string, number>();
+  for (const v of mvpVotes ?? []) mvpTally.set(v.voted_player_id, (mvpTally.get(v.voted_player_id) ?? 0) + 1);
+  const myMvpVote = mvpVotes?.find((v) => v.voter_profile_id === session?.userId)?.voted_player_id ?? null;
+
+  const offerIds = (carpoolOffers ?? []).map((o) => o.id);
+  const { data: passengers } = offerIds.length
+    ? await supabase
+        .from("carpool_passengers")
+        .select("id, offer_id, player_id, players(full_name)")
+        .in("offer_id", offerIds)
+    : { data: [] };
 
   return (
     <div className="space-y-6">
@@ -131,6 +161,33 @@ export default async function MatchDetailPage({
           </CardHeader>
           <CardContent>
             <ScoutingNotesForm matchId={matchId} initial={scoutingNote ?? null} />
+          </CardContent>
+        </Card>
+      )}
+
+      {match.status === "a_venir" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Covoiturage</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CarpoolBoard
+              matchId={matchId}
+              players={players ?? []}
+              currentPlayerId={session?.playerId ?? null}
+              canManageAll={!session?.playerId}
+              offers={(carpoolOffers ?? []).map((o) => ({
+                id: o.id,
+                driverPlayerId: o.driver_player_id,
+                driverName: o.players?.full_name ?? "?",
+                seatsTotal: o.seats_total,
+                departureLocation: o.departure_location,
+                notes: o.notes,
+                passengers: (passengers ?? [])
+                  .filter((p) => p.offer_id === o.id)
+                  .map((p) => ({ id: p.id, playerId: p.player_id, name: p.players?.full_name ?? "?" })),
+              }))}
+            />
           </CardContent>
         </Card>
       )}
@@ -218,6 +275,31 @@ export default async function MatchDetailPage({
                 </div>
               ))
             )}
+          </CardContent>
+        </Card>
+      )}
+
+      {match.status === "joue" && players && players.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Vote MVP</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <MvpVoting matchId={matchId} players={players} tally={mvpTally} myVote={myMvpVote} />
+          </CardContent>
+        </Card>
+      )}
+
+      {match.status === "joue" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Photos du match</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <MatchPhotoGallery
+              matchId={matchId}
+              photos={(photos ?? []).map((p) => ({ id: p.id, storagePath: p.storage_path, caption: p.caption }))}
+            />
           </CardContent>
         </Card>
       )}

@@ -31,7 +31,14 @@ import {
 import { inviteMember } from "@/app/(dashboard)/utilisateurs/actions";
 import { ROLE_LABELS } from "@/lib/nav-items";
 
-export function InviteMemberDialog() {
+interface AvailablePlayer {
+  id: string;
+  full_name: string;
+  jersey_number: number | null;
+  teams: { name: string } | null;
+}
+
+export function InviteMemberDialog({ availablePlayers }: { availablePlayers: AvailablePlayer[] }) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
@@ -46,10 +53,11 @@ export function InviteMemberDialog() {
     formState: { errors },
   } = useForm<InviteMemberInput>({
     resolver: zodResolver(inviteMemberSchema),
-    defaultValues: { email: "", fullName: "", role: "coach" },
+    defaultValues: { email: "", fullName: "", role: "coach", playerId: "" },
   });
 
   const role = watch("role");
+  const playerId = watch("playerId");
 
   const onSubmit = (values: InviteMemberInput) => {
     setServerError(null);
@@ -58,6 +66,7 @@ export function InviteMemberDialog() {
     formData.set("email", values.email);
     formData.set("fullName", values.fullName ?? "");
     formData.set("role", values.role);
+    formData.set("playerId", values.playerId ?? "");
 
     startTransition(async () => {
       const result = await inviteMember({}, formData);
@@ -127,6 +136,38 @@ export function InviteMemberDialog() {
                 </SelectContent>
               </Select>
             </div>
+
+            {role === "joueur" && (
+              <div className="space-y-2">
+                <Label>Joueur associé</Label>
+                <Select
+                  value={playerId}
+                  onValueChange={(v) => setValue("playerId", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choisir un joueur" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availablePlayers.length === 0 ? (
+                      <p className="px-2 py-1.5 text-sm text-muted-foreground">
+                        Tous les joueurs ont déjà un compte.
+                      </p>
+                    ) : (
+                      availablePlayers.map((player) => (
+                        <SelectItem key={player.id} value={player.id}>
+                          {player.full_name}
+                          {player.jersey_number ? ` #${player.jersey_number}` : ""}
+                          {player.teams?.name ? ` · ${player.teams.name}` : ""}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+                {errors.playerId && (
+                  <p className="text-sm text-destructive">{errors.playerId.message}</p>
+                )}
+              </div>
+            )}
 
             {serverError && <p className="text-sm text-destructive">{serverError}</p>}
             <DialogFooter>

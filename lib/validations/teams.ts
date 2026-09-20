@@ -21,6 +21,9 @@ export const playerSchema = z.object({
       message: "Le numéro doit être entre 1 et 99",
     }),
   status: z.enum(playerStatusValues).default("actif"),
+  emergencyContactName: z.string().optional().or(z.literal("")),
+  emergencyContactPhone: z.string().optional().or(z.literal("")),
+  medicalNotes: z.string().optional().or(z.literal("")),
 });
 
 export type PlayerInput = z.infer<typeof playerSchema>;
