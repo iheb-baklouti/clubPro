@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { logout } from "@/app/(auth)/actions";
 import { ROLE_LABELS } from "@/lib/nav-items";
-import type { UserRole } from "@/lib/types/database.types";
+import type { UserRole } from "@/lib/types";
 
 interface UserMenuProps {
   fullName: string | null;

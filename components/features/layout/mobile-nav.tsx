@@ -6,9 +6,9 @@ import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { SidebarNav } from "@/components/features/layout/sidebar-nav";
-import type { NavItem } from "@/lib/nav-items";
+import type { UserRole } from "@/lib/types";
 
-export function MobileNav({ items }: { items: NavItem[] }) {
+export function MobileNav({ role }: { role: UserRole }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -23,7 +23,7 @@ export function MobileNav({ items }: { items: NavItem[] }) {
           <SheetTitle>ClubPro</SheetTitle>
         </SheetHeader>
         <div className="mt-6" onClick={() => setOpen(false)}>
-          <SidebarNav items={items} />
+          <SidebarNav role={role} />
         </div>
       </SheetContent>
     </Sheet>

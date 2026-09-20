@@ -33,3 +33,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes route-loading-sweep {
+  0% {
+    transform: translateX(-100%) scaleX(0.5);
+  }
+  60% {
+    transform: translateX(20%) scaleX(1);
+  }
+  100% {
+    transform: translateX(100%) scaleX(0.5);
+  }
+}
+
+.animate-route-loading {
+  animation: route-loading-sweep 1s ease-in-out infinite;
+}

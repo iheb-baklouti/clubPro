@@ -10,9 +10,10 @@ import {
   Dumbbell,
   LayoutTemplate,
   HeartPulse,
+  Repeat,
 } from "lucide-react";
 
-import type { UserRole } from "@/lib/types/database.types";
+import type { UserRole } from "@/lib/types";
 
 export interface NavItem {
   label: string;
@@ -27,12 +28,12 @@ export function getNavItems(role: UserRole): NavItem[] {
     case "admin":
       return [
         { label: "Tableau de bord", href: "/direction", icon: LayoutDashboard },
-        { label: "Effectif", icon: Users },
-        { label: "Calendrier", icon: CalendarDays },
-        { label: "Utilisateurs & rôles", icon: UserCog },
-        { label: "Tâches", icon: ClipboardList },
-        { label: "Messagerie", icon: MessageSquare },
-        { label: "Cotisations", icon: Wallet },
+        { label: "Effectif", href: "/equipes", icon: Users },
+        { label: "Calendrier", href: "/calendrier", icon: CalendarDays },
+        { label: "Utilisateurs & rôles", href: "/utilisateurs", icon: UserCog },
+        { label: "Tâches", href: "/taches", icon: ClipboardList },
+        { label: "Messagerie", href: "/messagerie", icon: MessageSquare },
+        { label: "Cotisations", href: "/cotisations", icon: Wallet },
       ];
     case "staff_medical":
       return [
@@ -43,10 +44,13 @@ export function getNavItems(role: UserRole): NavItem[] {
     default:
       return [
         { label: "Tableau de bord", href: "/coach", icon: LayoutDashboard },
-        { label: "Calendrier des matchs", icon: CalendarDays },
-        { label: "Effectif", icon: Users },
-        { label: "Entraînements", icon: Dumbbell },
-        { label: "Éditeur tactique", icon: LayoutTemplate },
+        { label: "Calendrier des matchs", href: "/calendrier", icon: CalendarDays },
+        { label: "Effectif", href: "/equipes", icon: Users },
+        { label: "Entraînements", href: "/entrainements", icon: Dumbbell },
+        { label: "Exercices", href: "/drills", icon: LayoutTemplate },
+        { label: "Simulations", href: "/simulations", icon: Repeat },
+        { label: "Tâches", href: "/taches", icon: ClipboardList },
+        { label: "Messagerie", href: "/messagerie", icon: MessageSquare },
       ];
   }
 }

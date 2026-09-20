@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
-import { getNavItems } from "@/lib/nav-items";
 import { SidebarNav } from "@/components/features/layout/sidebar-nav";
 import { MobileNav } from "@/components/features/layout/mobile-nav";
 import { UserMenu } from "@/components/features/layout/user-menu";
@@ -42,21 +41,19 @@ export default async function DashboardLayout({
     );
   }
 
-  const navItems = getNavItems(profile.role);
-
   return (
     <div className="flex min-h-dvh">
       <aside className="hidden w-64 shrink-0 border-r bg-card md:flex md:flex-col">
         <div className="flex h-16 items-center border-b px-6 text-lg font-semibold">ClubPro</div>
         <div className="flex-1 overflow-y-auto p-3">
-          <SidebarNav items={navItems} />
+          <SidebarNav role={profile.role} />
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-16 items-center justify-between border-b bg-card px-4 md:px-6">
           <div className="flex items-center gap-2">
-            <MobileNav items={navItems} />
+            <MobileNav role={profile.role} />
             <span className="text-lg font-semibold md:hidden">ClubPro</span>
           </div>
           <UserMenu

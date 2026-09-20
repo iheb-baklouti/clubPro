@@ -60,6 +60,17 @@ export async function signup(
   });
 
   if (error) {
+    if (error.code === "over_email_send_rate_limit") {
+      return {
+        error:
+          "Trop de tentatives d'inscription en peu de temps (limite d'envoi d'emails Supabase). " +
+          "Attendez quelques minutes avant de réessayer, ou configurez un fournisseur SMTP personnalisé " +
+          "dans Supabase (Authentication > Emails) pour lever cette limite en développement/production.",
+      };
+    }
+    if (error.code === "user_already_exists" || error.code === "email_exists") {
+      return { error: "Un compte existe déjà avec cet email." };
+    }
     return { error: "Impossible de créer le compte : " + error.message };
   }
 

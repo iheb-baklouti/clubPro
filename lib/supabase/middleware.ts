@@ -4,7 +4,12 @@ import type { Database } from "@/lib/types/database.types";
 
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
-const PUBLIC_PATHS = ["/login", "/signup", "/auth/callback"];
+// /definir-mot-de-passe doit être public : les liens d'invitation Supabase
+// livrent la session via un fragment d'URL (#access_token=...), jamais reçu
+// par le serveur. La page établit donc la session côté client ; si le
+// middleware bloquait la première requête faute de cookie, le JS client
+// n'aurait jamais la chance de s'exécuter pour lire ce fragment.
+const PUBLIC_PATHS = ["/login", "/signup", "/auth/callback", "/definir-mot-de-passe"];
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });

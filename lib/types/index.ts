@@ -1,6 +1,6 @@
-import type { UserRole } from "@/lib/types/database.types";
+import type { Database } from "@/lib/types/database.types";
 
-export type { UserRole };
+export type UserRole = Database["public"]["Enums"]["user_role"];
 
 export interface Profile {
   id: string;

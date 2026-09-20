@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { RouteLoadingBar } from "@/components/features/layout/route-loading-bar";
 
 export const metadata: Metadata = {
   title: "ClubPro",
@@ -21,6 +23,9 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className="min-h-dvh antialiased">
+        <Suspense fallback={null}>
+          <RouteLoadingBar />
+        </Suspense>
         {children}
         <Toaster position="top-center" richColors />
       </body>

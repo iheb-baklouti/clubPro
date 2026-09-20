@@ -4,11 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
-import type { NavItem } from "@/lib/nav-items";
+import { getNavItems } from "@/lib/nav-items";
+import type { UserRole } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 
-export function SidebarNav({ items }: { items: NavItem[] }) {
+export function SidebarNav({ role }: { role: UserRole }) {
   const pathname = usePathname();
+  const items = getNavItems(role);
 
   return (
     <nav className="flex flex-col gap-1">
